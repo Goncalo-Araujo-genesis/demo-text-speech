@@ -1,0 +1,51 @@
+<!-- Configuration Panel (for development/admin) -->
+<div class="config-panel" [class.open]="showConfig">
+  <div class="config-content">
+    <h3>Configurações do Sistema</h3>
+    
+    <!-- Login Toggle -->
+    <div class="config-item">
+      <label class="toggle-label">
+        <span>Autenticação de Login</span>
+        <div class="toggle-container">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="loginEnabled" 
+            (change)="toggleLoginMode()"
+            class="toggle-input"
+          >
+          <div class="toggle-slider"></div>
+        </div>
+      </label>
+      <p class="config-description">
+        {{ loginEnabled ? 'Login está ativo - usuários precisam autenticar' : 'Login está desativo - acesso direto ao chat' }}
+      </p>
+    </div>
+
+    <!-- User Info (if authenticated) -->
+    <div class="config-item" *ngIf="isLoginEnabled() && isAuthenticated()">
+      <h4>Informações do Utilizador</h4>
+      <div class="user-info" *ngIf="getUserInfo()">
+        <p><strong>Utilizador:</strong> {{ getUserInfo()?.username || 'N/A' }}</p>
+        <p><strong>Email:</strong> {{ getUserInfo()?.email || 'N/A' }}</p>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <fa-icon [icon]="faSignOutAlt"></fa-icon>
+        Logout
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Config Toggle Button (floating) -->
+<button class="config-toggle" (click)="toggleConfig()" [class.active]="showConfig">
+  <fa-icon [icon]="faCog"></fa-icon>
+</button>
+
+<!-- Main Application Content -->
+<div class="app-container" [class.config-open]="showConfig">
+  <router-outlet></router-outlet>
+</div>
+
+<!-- Overlay for config panel -->
+<div class="config-overlay" [class.active]="showConfig" (click)="showConfig = false"></div>

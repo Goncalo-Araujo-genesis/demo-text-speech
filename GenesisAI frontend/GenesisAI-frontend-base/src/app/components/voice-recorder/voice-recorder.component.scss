@@ -1,0 +1,51 @@
+@import "src/themes/theme-default";
+
+.voice-recorder-content {
+    position: relative;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .recorder-loader {
+        position: absolute;
+        top: -15px;
+        left: 3px;
+    }
+
+    .btn-recorder {
+        position: relative;
+        cursor: pointer;
+        font-size: 35px;
+        color: $color-clear-convo-icon;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+        justify-items: center;
+        width: 40px;
+    }
+
+    .btn-recorder-disabled {
+        color: $color-voice-button-disabled !important;
+        cursor: not-allowed;
+    }
+
+    .visualizer-container {
+        width: 40px;
+        height: 40px;
+        background: transparent;
+        border-radius: 4px;
+        overflow: hidden;
+        position: absolute;
+        top: -40px;
+    }
+
+    .visualizer {
+        width: 100%;
+        height: 100%;
+        background: $color-voice-visualizer;
+        transform-origin: bottom;
+        transition: transform 0.05s ease-out;
+    }
+}

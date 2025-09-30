@@ -1,0 +1,285 @@
+@import "src/themes/theme-default";
+
+// Base styles
+html,
+body {
+  font-family: 'Mulish', sans-serif;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+  font-size: 15px;
+  color: $color-input-font;
+}
+
+// App container
+.app-container {
+  width: 100%;
+  height: 100vh;
+  transition: filter 0.3s ease;
+
+  &.config-open {
+    filter: blur(2px);
+  }
+}
+
+// Configuration panel styles
+.config-panel {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 400px;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: right 0.3s ease;
+  backdrop-filter: blur(10px);
+  overflow-y: auto;
+
+  &.open {
+    right: 0;
+  }
+
+  .config-content {
+    padding: 2rem;
+    color: white;
+
+    h3 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    h4 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+}
+
+.config-item {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+
+  .config-description {
+    margin: 0.5rem 0 0 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.4;
+  }
+}
+
+// Toggle switch styles
+.toggle-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: 500;
+
+  span {
+    font-size: 1.1rem;
+  }
+}
+
+.toggle-container {
+  position: relative;
+}
+
+.toggle-input {
+  display: none;
+
+  &:checked + .toggle-slider {
+    background-color: #4ade80;
+
+    &::before {
+      transform: translateX(24px);
+      background-color: white;
+    }
+  }
+}
+
+.toggle-slider {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 24px;
+    height: 24px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// User info styles
+.user-info {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+
+  p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+  }
+}
+
+// Logout button
+.logout-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  width: 100%;
+  justify-content: center;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Config toggle button (floating)
+.config-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 1001;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+
+  &:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  &.active {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    transform: rotate(45deg);
+  }
+
+  fa-icon {
+    transition: transform 0.3s ease;
+  }
+}
+
+// Config overlay
+.config-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .config-panel {
+    width: 100%;
+    right: -100%;
+  }
+
+  .config-toggle {
+    top: 15px;
+    right: 15px;
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+
+  .config-content {
+    padding: 1.5rem;
+
+    h3 {
+      font-size: 1.3rem;
+    }
+  }
+
+  .config-item {
+    padding: 1rem;
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .config-panel {
+    border: 2px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .config-item {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .toggle-slider {
+    border: 2px solid rgba(255, 255, 255, 0.8);
+  }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .config-panel,
+  .config-toggle,
+  .config-overlay,
+  .app-container,
+  .toggle-slider,
+  .toggle-slider::before,
+  .logout-btn {
+    transition: none;
+  }
+
+  .config-toggle:hover {
+    transform: none;
+  }
+}

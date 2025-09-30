@@ -1,0 +1,12 @@
+<div class="voice-recorder-content">
+    <ng-container *ngIf="isRecording">
+        <div class="visualizer-container">
+            <div class="visualizer" #visualizer></div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="isSending && !isRecording">
+        <loading class="recorder-loader"></loading>
+    </ng-container>
+    <fa-icon class="btn-recorder" [icon]="isRecording ? faStop : faMicrophone"
+        [ngClass]="{'btn-recorder-disabled': isSending && !isRecording}" (click)="toggleRecording()"></fa-icon>
+</div>

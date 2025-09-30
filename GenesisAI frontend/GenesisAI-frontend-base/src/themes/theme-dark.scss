@@ -1,0 +1,85 @@
+// Primary brand colors
+$color-primary: #0166fe;
+$color-font: #ffffff;
+
+// Grays and neutrals
+$color-white: #fff;
+$color-off-white: #E6EBEC;
+
+$color-black: #000;
+
+
+// Chat colors
+$color-question-background: #4e4e4e;
+$color-answer-background: #2c2c2c;
+$color-repeat-question-icon: #cccfcf;
+$color-feedback-icon: #E6EBEC;
+
+$color-question-icon: #0166fe;
+// Button colors
+$color-voice-button: #0166fe;
+$color-voice-visualizer: #0166fe;
+$color-voice-button-disabled: #455558;
+
+// Other font colors
+$color-header-font: #E6EBEC;
+$color-input-font: #E6EBEC;
+$color-question-font: #E6EBEC;
+$color-answer-font: #E6EBEC;
+$color-g-button-questions-font: #E6EBEC;
+
+// Background Colors
+$color-chat-background: rgb(36, 36, 36);
+$color-top-menu: rgb(20, 20, 20);
+$color-text-box-prompt: #393939;
+
+
+$color-menu-border: rgb(31, 31, 31);
+$color-menu-border-button: #2d2d2d;
+$color-menu-button-disable: #455558;
+$color-menu-button-background: #393939;
+$color-menu-button-background-active: #4e4e4e;
+$color-menu-button-background-disable: #999999;
+$color-menu-button-background-focus: #4e4e4e;
+$color-menu-drawer-background: rgb(20, 20, 20);
+
+$color-survey-option-background: #878a8d;
+$color-survey-option-background-hover: #6d7175;
+$color-survey-option-text-hover: #e0e0e0;
+$color-survey-option-background-active: #5c5f63;
+$color-survey-option-text-active: #cfcfcf;
+
+$color-like: #0166fe;
+$color-dislike: #89151d;
+
+$color-rgba-overlay: rgba(0, 0, 0, 0.3);
+
+// Hyperlink colors
+$color-hyperlink: #d4eeff;
+$color-hyperlink-hover: #27acff;
+$color-hyperlink-visited: #5bc0ff;
+
+
+
+$color-lang-select-background: #393939;
+$color-lang-select-text: #fff;
+
+::ng-deep .cdk-overlay-pane:not(.mat-mdc-select-panel-above) .mdc-menu-surface.mat-mdc-select-panel {
+  background-color: $color-lang-select-background;
+}
+
+::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
+  color: $color-lang-select-text;
+}
+
+::ng-deep .mat-mdc-select-value-text {
+  color: $color-lang-select-text;
+}
+
+::ng-deep .mat-mdc-form-field.mat-primary .mat-mdc-select-arrow {
+  color: $color-lang-select-text;
+}
+
+::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple::before {
+  border-bottom-color: $color-lang-select-text;
+}

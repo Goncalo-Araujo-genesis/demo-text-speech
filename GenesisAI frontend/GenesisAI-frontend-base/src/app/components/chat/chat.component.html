@@ -1,0 +1,245 @@
+<div class="header">
+  <!-- Top Menu Container -->
+  <div class="top-menu">
+    <!-- Left Section: Hamburger Icon + Logo + Name -->
+    <div class="left">
+      <!-- Hamburger Icon -->
+      <div class="hamburger" (click)="menuOpen = !menuOpen">
+        <fa-icon [icon]="faBarsIcon"></fa-icon>
+      </div>
+      <div class="app">
+        <img src="/assets/genesis-ai-logo.png" class="header-logo" alt="Helper Logo">
+      </div>
+    </div>
+
+    <!-- Right Section: Language Selector / Menu -->
+    <div class="right">
+      <!-- Show simple language selector when logout is disabled -->
+      <mat-form-field class="langSelect" *ngIf="!showLogoutMenu">
+        <mat-select [(ngModel)]="currentLanguage" (selectionChange)="onLangChange()">
+          <mat-option value="pt">
+            <span>PT</span>
+          </mat-option>
+          <mat-option value="en">
+            <span>EN</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Show menu with logout option when logout is enabled -->
+      <div *ngIf="showLogoutMenu" class="menu-container">
+        <button mat-icon-button [matMenuTriggerFor]="settingsMenu" class="settings-button">
+          <fa-icon [icon]="faEllipsisVertical"></fa-icon>
+        </button>
+        
+        <mat-menu #settingsMenu="matMenu" class="settings-menu">
+          <!-- Language Selection -->
+          <div class="menu-section">
+            <div class="menu-section-title">
+              <mat-icon>language</mat-icon>
+              <span>{{currentLanguage === 'pt' ? 'Idioma' : 'Language'}}</span>
+            </div>
+            <button mat-menu-item 
+                    [class.active]="currentLanguage === 'pt'"
+                    (click)="currentLanguage = 'pt'; onLangChange()">
+              <mat-icon>{{currentLanguage === 'pt' ? 'radio_button_checked' : 'radio_button_unchecked'}}</mat-icon>
+              <span>Português</span>
+            </button>
+            <button mat-menu-item 
+                    [class.active]="currentLanguage === 'en'"
+                    (click)="currentLanguage = 'en'; onLangChange()">
+              <mat-icon>{{currentLanguage === 'en' ? 'radio_button_checked' : 'radio_button_unchecked'}}</mat-icon>
+              <span>English</span>
+            </button>
+          </div>
+          
+          <mat-divider></mat-divider>
+          
+          <!-- Logout Option -->
+          <button mat-menu-item (click)="onLogout()" class="logout-option">
+            <fa-icon [icon]="faSignOutAlt"></fa-icon>
+            <span class="logout">Logout</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Section: Chatbot Interface -->
+<section id="chatbot" class="d-flex w-100 position-relative">
+
+  <!-- MENU START (Drawer) -->
+  <div [ngClass]="{ 'menu': true, 'open': menuOpen }">
+    <!-- Close Menu Button -->
+    <div [ngClass]="{ 'close-menu': true, 'open': menuOpen }" (click)="menuOpen = false">
+      <fa-icon [icon]="faArrowLeftIcon"></fa-icon>
+    </div>
+
+    <!-- Standard Questions List -->
+    <div class="d-flex flex-column h-100 align-items-flex-start flex-grow-1 p-4">
+      <div role="button" class="g-button questionButton mb-3 pe-2 pb-2 pt-2 ps-2 d-flex flex-row"
+        *ngFor="let question of standardQuestions" (click)="menuOpen = false; promptModel = question" tabindex="0"
+        [class.disabled]="isDisabled">
+        <span class="d-block ps-2">{{ question }}</span>
+      </div>
+    </div>
+  </div>
+  <!-- MENU END -->
+
+  <!-- CHAT START -->
+  <div class="chat w-100 d-flex flex-column">
+    <main class="d-flex flex-column flex-grow-1 w-100 pe-3 pb-3 ps-3" #scrollMain>
+      <div class="w-100 pb-4 flexContainer">
+        <!-- Centered content container with max width -->
+        <div class="dimensionContainer">
+          <!-- DISCLAIMER -->
+          <div class="answer d-flex w-100 pb-2 pt-2 pl-3 mt-4" *ngIf="disclaimerFunction">
+            <div class="disclaimerBoxPad">
+            </div>
+            <div class="answer-text-container">
+              <div class="answer-text disclaimerBox">
+                <span [class.expanded]="isTextExpanded"
+                  [innerHTML]="isTextExpanded ? initialText : truncatedText"></span>
+                <button class="toggle-button" (click)="toggleText()">
+                  {{ isTextExpanded ? (isEnglish ? 'Read less' : 'Ler menos') : (isEnglish ? 'Read more' : 'Ler mais')
+                  }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Iterate through messages -->
+          <ng-container *ngFor="let message of messages">
+
+            <!-- Survey Message Type -->
+            <div *ngIf="message.type === 'survey'" class="answer d-flex w-100 pb-2 pt-2 pl-3 mt-4">
+              <div class="answer-icon">
+                <img style="width: 32px" src="/assets/genesis-ai-ico.png" alt="Answer Icon">
+              </div>
+              <div class="answer-text-container">
+                <div class="answer-text">
+                  <span #messageContainer [innerHtml]="message.text"></span>
+                  <!-- Survey Options -->
+                  <ng-container *ngFor="let option of surveyOptions">
+                    <span class="surveyOption" [innerText]="isEnglish ? option.nameEN : option.namePT"
+                      (click)="answerSurvey(option.id)"></span>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+
+            <!-- Question Message Type -->
+            <div *ngIf="message.type === 'question'" class="question d-flex w-100 pb-2 pt-2 pl-3 mt-4">
+              <div class="question-text-container">
+                <div class="question-text">
+                  <span #messageContainer [innerHtml]="message.text"></span>
+                </div>
+                <div class="question-edit">
+                  <fa-icon [icon]="faArrowsRotateIcon" [genesisTooltip]="askDescription"
+                    (click)="promptModel = message.text"></fa-icon>
+                </div>
+              </div>
+              <div class="question-icon">
+                <fa-icon [icon]="faUserIcon"></fa-icon>
+              </div>
+            </div>
+
+            <!-- Answer Message Type -->
+            <div *ngIf="message.type === 'answer'" class="answer d-flex w-100 pb-2 pt-2 pl-3 mt-4">
+              <div class="answer-icon">
+                <img style="width: 32px" src="/assets/genesis-ai-ico.png" alt="Answer Icon">
+              </div>
+              <div class="answer-text-container">
+                <div class="answer-text">
+                  <span #messageContainer [innerHtml]="message.text"></span>
+                  <div class="feedbackContainer" *ngIf="message.allowsfeedback && message.messageid.length > 0">
+                    <div class="feedback d-flex justify-content-center align-items-center">
+                      <svg class="like me-2" width="19" height="19" viewBox="0 0 19 19" fill="none"
+                        xmlns="http://www.w3.org/2000/svg" [class.active]="message.feedback === 'positive'"
+                        (click)="handleFeedback(message, 'positive')">
+                        <path
+                          d="M16.1095 5.9532H12.4434V3.32508C12.4434 2.02865 12.0557 1.08864 11.288 0.524629C10.0816 -0.360549 8.44444 0.136874 8.37394 0.160374L7.88044 0.317043V4.05751C7.88044 4.96227 7.38693 5.7652 6.41167 6.45062C6.09441 6.67388 6.01608 7.11255 6.23933 7.43372C6.46258 7.75097 6.90126 7.82931 7.22243 7.60606C8.57761 6.65429 9.29437 5.42836 9.29437 4.05751V1.41372C9.64688 1.38239 10.113 1.40589 10.4576 1.65656C10.8415 1.93856 11.0373 2.49866 11.0373 3.31725V7.35539H16.1134C16.9163 7.35539 17.5704 7.99381 17.5939 8.79282L16.5403 15.4082L16.5364 15.4317C16.4894 15.7998 16.3523 16.9239 14.6368 16.9239H6.73675C5.96125 16.9239 5.33065 16.2933 5.33065 15.5178V8.97691C5.33065 7.78231 4.35931 6.80704 3.16079 6.80704H2.16986C0.975263 6.80704 0 7.77839 0 8.97691V15.6862C0 16.8808 0.971346 17.8561 2.16986 17.8561C2.55762 17.8561 2.87487 17.5389 2.87487 17.1511C2.87487 16.7633 2.55762 16.4461 2.16986 16.4461C1.75077 16.4461 1.41002 16.1053 1.41002 15.6862V8.97691C1.41002 8.55782 1.75077 8.21706 2.16986 8.21706H3.16079C3.57988 8.21706 3.92063 8.55782 3.92063 8.97691V15.6862C3.92063 15.7411 3.92847 15.7998 3.94022 15.8507C4.10472 17.249 5.2954 18.3379 6.73675 18.3379H14.6289C15.428 18.3379 16.1408 18.1459 16.6813 17.7817C17.3785 17.3156 17.8093 16.5675 17.9268 15.6197L18.9882 8.96516C18.9961 8.92599 19 8.88291 19 8.84374C19 7.24963 17.7036 5.9532 16.1095 5.9532Z" />
+                      </svg>
+                      <svg class="dislike" width="19" height="19" viewBox="0 0 19 19" fill="none"
+                        xmlns="http://www.w3.org/2000/svg" [class.active]="message.feedback === 'negative'"
+                        (click)="handleFeedback(message, 'negative')">
+                        <path
+                          d="M2.89054 12.3847L6.55659 12.3847L6.55659 15.0128C6.55659 16.3092 6.94434 17.2493 7.71202 17.8133C8.91837 18.6984 10.5556 18.201 10.6261 18.1775L11.1196 18.0208L11.1196 14.2804C11.1196 13.3756 11.6131 12.5727 12.5883 11.8873C12.9056 11.664 12.9839 11.2253 12.7607 10.9042C12.5374 10.5869 12.0987 10.5086 11.7776 10.7318C10.4224 11.6836 9.70563 12.9095 9.70563 14.2804L9.70563 16.9242C9.35312 16.9555 8.88703 16.932 8.54236 16.6813C8.15852 16.3993 7.96269 15.8392 7.96269 15.0206L7.96269 10.9825L2.88662 10.9825C2.08369 10.9825 1.4296 10.3441 1.4061 9.54507L2.4597 2.92973L2.46361 2.90623C2.51061 2.53806 2.6477 1.41396 4.36322 1.41396L12.2632 1.41396C13.0388 1.41396 13.6693 2.04455 13.6693 2.82006L13.6693 9.36098C13.6693 10.5556 14.6407 11.5308 15.8392 11.5308L16.8301 11.5308C18.0247 11.5308 19 10.5595 19 9.36098L19 2.65164C19 1.45705 18.0287 0.481783 16.8301 0.481783C16.4424 0.481783 16.1251 0.799038 16.1251 1.18679C16.1251 1.57455 16.4424 1.8918 16.8301 1.8918C17.2492 1.8918 17.59 2.23256 17.59 2.65164L17.59 9.36098C17.59 9.78007 17.2492 10.1208 16.8301 10.1208L15.8392 10.1208C15.4201 10.1208 15.0794 9.78007 15.0794 9.36098L15.0794 2.65165C15.0794 2.59681 15.0715 2.53806 15.0598 2.48714C14.8953 1.08887 13.7046 2.71658e-05 12.2632 2.72918e-05L4.37106 2.79818e-05C3.57205 2.80516e-05 2.8592 0.191947 2.3187 0.556201C1.62152 1.02229 1.19068 1.77038 1.07318 2.71823L0.0117504 9.37273C0.00391691 9.4119 -7.76568e-07 9.45499 -7.73144e-07 9.49415C-6.33783e-07 11.0883 1.29643 12.3847 2.89054 12.3847Z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Error Message -->
+          <div class="answer d-flex w-100 pb-24 pt-24 px-24 mt-24" *ngIf="requestError">
+            <div class="icon icon-alert">
+              <fa-icon [icon]="faCircleExclamationIcon"></fa-icon>
+            </div>
+            <div class="position-relative">
+              <ng-container *ngIf="requestErrorStatus == '429'; else elseError">
+                <span *ngIf="!isEnglish">
+                  Criámos um limite de utilizadores para garantir uma utilização adequada deste sistema. Neste momento,
+                  esse limite foi atingido. Pedimos a sua compreensão e que volte a tentar o acesso mais tarde.
+                </span>
+                <span *ngIf="isEnglish">
+                  We've created a user limit to ensure usage suitable for this system. At this time, that limit has been
+                  reached. We ask for your understanding and that you try again to access later.
+                </span>
+              </ng-container>
+              <!-- Generic Error Message -->
+              <ng-template #elseError>
+                <span *ngIf="!isEnglish">Algo correu mal, por favor tente novamente...</span>
+                <span *ngIf="isEnglish">Something went wrong, please try again...</span>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Chat Input and Controls -->
+    <div class="text-wrapper pe-3 ps-3 w-100 d-flex flex-column position-relative">
+      <!-- Input Area for User Questions -->
+      <div class="d-flex flex-column flexInputSearch">
+        <div class="optionsContainerBottom">
+          <div class="dimensionsInputSearch">
+            <!-- Loading Indicator -->
+            <div class="inProgressContainer">
+              <div class="d-flex w-100" *ngIf="requestInProgress">
+                <div class="">
+                  <img class="inProgressIcon" src="/assets/genesis-ai-ico.png" alt="Loading Icon">
+                </div>
+                <div class="position-relative">
+                  <loading></loading>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex w-100">
+              <fa-icon [icon]="faPenToSquare" [genesisTooltip]="newChatDescription" class="clearChatIcon"
+                (click)="clear()"></fa-icon>
+              <div class="text-box d-flex w-100">
+                <input class="w-100 pb-2 pt-2 pe-2 ps-3"
+                  [placeholder]="isEnglish ? 'Type your question here...' : 'Escreva a sua pergunta aqui...'"
+                  [(ngModel)]="promptModel" (keyup.enter)="submit()" [maxlength]="6000" #promptRef
+                  aria-label="User Question Input" />
+                <div class="send-button ps-3 pe-3 icon d-flex align-items-center cumstom-send-button">
+                  <fa-icon [icon]="faArrowRightIcon" [genesisTooltip]="sendDescription" class="submitQuestionIcon"
+                    alt="Send Question" (click)="submit()" />
+                </div>
+              </div>
+              <ng-container *ngIf="turnOnVoiceRecorder">
+                <app-voice-recorder (onNewPrompt)="sendMessageByVoice($event)" [genesisTooltip]="micDescription"
+                  class="voice-recorder-content"></app-voice-recorder>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- CHAT END -->
+</section>

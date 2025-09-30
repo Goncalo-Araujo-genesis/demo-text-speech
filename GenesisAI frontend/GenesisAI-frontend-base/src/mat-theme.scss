@@ -1,0 +1,119 @@
+@use '@angular/material' as mat;
+
+$black-87-opacity: rgba(0, 0, 0, 0.87);
+$white-87-opacity: rgba(255, 255, 255, 0.87);
+
+// Old primary color palette
+// $my-primary: mat.define-palette((
+//   50: #e0f1ff,
+//   100: #b3daff,
+//   200: #80c2ff,
+//   300: #4da9ff,
+//   400: #268fff,
+//   500: #0066FF, // Main color
+//   600: #005ee6,
+//   700: #0053cc,
+//   800: #0049b3,
+//   900: #003d99,
+//   A100: #b3daff,
+//   A200: #80c2ff,
+//   A400: #4da9ff,
+//   A700: #003d99,
+//   contrast: (
+//     50: $black-87-opacity,
+//     100: $black-87-opacity,
+//     200: $black-87-opacity,
+//     300: $black-87-opacity,
+//     400: $black-87-opacity,
+//     500: white,
+//     600: white,
+//     700: white,
+//     800: white,
+//     900: white,
+//     A100: $black-87-opacity,
+//     A200: white,
+//     A400: white,
+//     A700: white,
+//   )
+// ));
+
+// New primary color palette
+$my-primary: mat.define-palette((
+  50:  #b3e2f2,  // ~50% white tint of #2bacd6
+  100: #99d9ef,  // ~40% white tint
+  200: #80d0ec,  // ~30% white tint
+  300: #66c6e8,  // ~20% white tint
+  400: #4dbde5,  // ~10% white tint
+  500: #2bacd6,  // Main color
+  600: #279bc1,  // ~10% black mix
+  700: #228bad,  // ~20% black mix
+  800: #1e7a98,  // ~30% black mix
+  900: #1a6a84,  // ~40% black mix
+  A100: #99d9ef, // Accent using the 100 value
+  A200: #80d0ec, // Accent using the 200 value
+  A400: #66c6e8, // Accent using the 300 value
+  A700: #1a6a84, // Accent using the 900 value
+  contrast: (
+    50: $black-87-opacity,
+    100: $black-87-opacity,
+    200: $black-87-opacity,
+    300: $black-87-opacity,
+    400: $black-87-opacity,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: $black-87-opacity,
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+));
+
+
+
+$my-warn: mat.define-palette((
+    50: rgb(255, 235, 238),
+    100: rgb(255, 205, 210),
+    200: rgb(239, 154, 154),
+    300: rgb(229, 115, 115),
+    400: rgb(239, 83, 80),
+    500: rgb(248, 94, 94),
+    600: rgb(229, 57, 53),
+    700: rgb(211, 47, 47),
+    800: rgb(198, 40, 40),
+    900: rgb(183, 28, 28),
+    A100: rgb(255, 138, 128),
+    A200: rgb(255, 82, 82),
+    A400: rgb(255, 23, 68),
+    A700: rgb(213, 0, 0),
+  contrast: (
+    50: $black-87-opacity,
+    100: $black-87-opacity,
+    200: $black-87-opacity,
+    300: $black-87-opacity,
+    400: $black-87-opacity,
+    500: white,
+    600: white,
+    700: white,
+    800: $white-87-opacity,
+    900: $white-87-opacity,
+    A100: $black-87-opacity,
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+));
+
+$my-accent: mat.define-palette($my-warn); // Replace with your own accent palette
+
+$my-theme: mat.define-light-theme((
+  color: (
+    primary: $my-primary,
+    accent: $my-accent,
+    warn: $my-warn
+  ),
+));
+
+@include mat.all-component-themes($my-theme); 
