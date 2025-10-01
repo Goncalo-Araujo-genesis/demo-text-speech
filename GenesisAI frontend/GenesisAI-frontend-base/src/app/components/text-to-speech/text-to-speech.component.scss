@@ -1,0 +1,69 @@
+@import "src/themes/theme-default";
+
+.text-to-speech-content {
+    position: relative;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .tts-loader {
+        position: absolute;
+        top: -15px;
+        left: 3px;
+    }
+
+    .btn-speaker {
+        position: relative;
+        cursor: pointer;
+        font-size: 28px;
+        color: $color-clear-convo-icon;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+        justify-items: center;
+        width: 35px;
+        transition: all 0.2s ease;
+
+        &:hover:not(.btn-speaker-disabled) {
+            color: lighten($color-clear-convo-icon, 10%);
+            transform: scale(1.1);
+        }
+    }
+
+    .btn-speaker-loading {
+        animation: spin 1s linear infinite;
+    }
+
+    .btn-speaker-playing {
+        color: #4CAF50;
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .btn-speaker-disabled {
+        color: $color-voice-button-disabled !important;
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+}

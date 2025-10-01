@@ -135,6 +135,41 @@ export class RequestService {
     return response;
   }
 
+
+  async sendTextToSpeech(text: string, language: string, voiceName?: string): Promise<Blob> {
+  try {
+    const headers = {
+      'api-key': this.configService.apiKey,
+      'Content-Type': 'application/json'
+    };
+
+    const body: any = {
+      text: text,
+      language: this.languageCode(language)
+    };
+
+    if (voiceName) {
+      body.voice_name = voiceName;
+    }
+
+    const response = await lastValueFrom(
+      this.http.post(
+        this.configService.apiUrl + "/genesisai-text-to-speech",
+        body,
+        {
+          headers: headers,
+          responseType: 'blob'
+        }
+      )
+    );
+
+    return response as Blob;
+  } catch (error) {
+    console.error('Error in sendTextToSpeech:', error);
+    throw error;
+  }
+}
+
 }
 
 

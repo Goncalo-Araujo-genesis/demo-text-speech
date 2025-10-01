@@ -30,10 +30,14 @@ import { AuthService } from './services/auth.service';
 import { AuthGuard } from './guards/auth.guard';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AppConfigService } from './services/app-config.service';
+import { TextToSpeechComponent } from './components/text-to-speech/text-to-speech.component';
+
 
 // export function loadConfig(configService: ConfigService) {
 //   return () => configService.loadConfig();
 // }
+
+
 
 @NgModule({
   declarations: [
@@ -46,6 +50,7 @@ import { AppConfigService } from './services/app-config.service';
     SvgLogoComponent,
     VoiceRecorderComponent,
     GenesisTooltipDirective,
+    TextToSpeechComponent,
   ],
   imports: [
     BrowserModule,

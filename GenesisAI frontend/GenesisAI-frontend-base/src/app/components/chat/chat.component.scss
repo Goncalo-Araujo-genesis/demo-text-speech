@@ -298,6 +298,13 @@ section#chatbot {
             position: relative;
             color: $color-answer-font;
 
+            .tts-container {
+              position: absolute;
+              bottom: 8px;
+              left: 8px;
+              z-index: 5;
+            }
+
             .surveyOption {
               display: block;
               padding: 10px;

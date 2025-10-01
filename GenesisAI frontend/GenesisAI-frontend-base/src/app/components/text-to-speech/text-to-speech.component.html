@@ -1,0 +1,15 @@
+<div class="text-to-speech-content">
+    <ng-container *ngIf="isLoading">
+        <loading class="tts-loader"></loading>
+    </ng-container>
+    <fa-icon 
+        class="btn-speaker" 
+        [icon]="isLoading ? faSpinner : faVolumeHigh"
+        [ngClass]="{
+            'btn-speaker-loading': isLoading,
+            'btn-speaker-playing': isPlaying,
+            'btn-speaker-disabled': !text || isLoading
+        }" 
+        (click)="toggleSpeech()">
+    </fa-icon>
+</div>

@@ -5,7 +5,7 @@ import logging
 import os
 import azure.cognitiveservices.speech as speechsdk
 import time
-#from pydub import AudioSegment
+from pydub import AudioSegment
 from io import BytesIO
 import scipy.io.wavfile as wav # type: ignore
 from dotenv import load_dotenv
@@ -245,104 +245,202 @@ def feedback():
 ####################################
 ## Speech to text backend endpoint##
 ####################################
-# @app.route('/genesisai-speech', methods=['POST', 'OPTIONS'])
-# @cross_origin(supports_credentials=True, origins=frontend_endpoint)
-# def speech_to_text():
+@app.route('/genesisai-speech', methods=['POST', 'OPTIONS'])
+@cross_origin(supports_credentials=True, origins=frontend_endpoint)
+def speech_to_text():
    
-#     try:
+    try:
         
-#         # Check if the request has the correct backend API key
-#         if request.headers.get("api-key") != backend_api_key:
-#             return jsonify({'error': 'Unauthorized'}), 500
+        # Check if the request has the correct backend API key
+        if request.headers.get("api-key") != backend_api_key:
+            return jsonify({'error': 'Unauthorized'}), 500
         
-#         if 'file' not in request.files:
-#             return jsonify({"status": "error", "message": "No audio file provided"}), 500
+        if 'file' not in request.files:
+            return jsonify({"status": "error", "message": "No audio file provided"}), 500
         
-#         if not request.headers.get("language"):
-#             return jsonify({"status": "error", "message": "No language header provided"}), 500
+        if not request.headers.get("language"):
+            return jsonify({"status": "error", "message": "No language header provided"}), 500
 
-#         # Get the request audio file
-#         file = request.files.get('file')
+        # Get the request audio file
+        file = request.files.get('file')
 
-#         # Get the request language
-#         language = request.headers.get("language")
+        # Get the request language
+        language = request.headers.get("language")
                 
-#         # Read the uploaded file
-#         audio = AudioSegment.from_file(file)
-#         # Convert to mono (1 channel), 32-bits per samples and 48KHz sample rate
-#         audio = audio.set_channels(1).set_frame_rate(48000).set_sample_width(4)
-#         # Save to a BytesIO object
-#         output = BytesIO()
-#         audio.export(output, format="wav")
-#         output.seek(0)
-#         # Read the WAV file using scipy
-#         sample_rate, audio_data = wav.read(output)
+        # Read the uploaded file
+        audio = AudioSegment.from_file(file)
+        # Convert to mono (1 channel), 32-bits per samples and 48KHz sample rate
+        audio = audio.set_channels(1).set_frame_rate(48000).set_sample_width(4)
+        # Save to a BytesIO object
+        output = BytesIO()
+        audio.export(output, format="wav")
+        output.seek(0)
+        # Read the WAV file using scipy
+        sample_rate, audio_data = wav.read(output)
 
-#         audio_bytes = audio_data.tobytes()
+        audio_bytes = audio_data.tobytes()
         
-#         all_results = []
+        all_results = []
 
-#         channels = 1
-#         bits_per_sample = 32
-#         samples_per_second = 48000
+        channels = 1
+        bits_per_sample = 32
+        samples_per_second = 48000
 
-#         wave_format = speechsdk.audio.AudioStreamFormat(samples_per_second, bits_per_sample, channels)        
-#         audio_input_stream = speechsdk.audio.PushAudioInputStream(stream_format=wave_format)
-#         audio_config = speechsdk.audio.AudioConfig(stream=audio_input_stream)
+        wave_format = speechsdk.audio.AudioStreamFormat(samples_per_second, bits_per_sample, channels)        
+        audio_input_stream = speechsdk.audio.PushAudioInputStream(stream_format=wave_format)
+        audio_config = speechsdk.audio.AudioConfig(stream=audio_input_stream)
 
-#         speech_config = speechsdk.SpeechConfig(subscription=azure_keyvault_client.get_secret("AISPEECH-KEY").value, region=azure_keyvault_client.get_secret("AISPEECH-REGION").value)
-#         speech_config.speech_recognition_language = language
+        speech_config = speechsdk.SpeechConfig(subscription=azure_keyvault_client.get_secret("AISPEECH-KEY").value, region=azure_keyvault_client.get_secret("AISPEECH-REGION").value)
+        speech_config.speech_recognition_language = language
 
-#         speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
+        speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
 
-#         done = False
+        done = False
 
-#         def stop_cb(evt: speechsdk.SessionEventArgs):
-#             """callback that signals to stop continuous transcription upon receiving an event `evt`"""
-#             print('CLOSING {}'.format(evt))
-#             nonlocal done
-#             done = True
+        def stop_cb(evt: speechsdk.SessionEventArgs):
+            """callback that signals to stop continuous transcription upon receiving an event `evt`"""
+            print('CLOSING {}'.format(evt))
+            nonlocal done
+            done = True
         
-#         # Subscribe to the events fired by the conversation transcriber
-#         speech_recognizer.recognizing.connect(lambda evt: print('RECOGNIZING: {}'.format(evt)))
-#         speech_recognizer.recognized.connect(lambda evt: all_results.append(evt.result.text))          
-#         speech_recognizer.session_started.connect(lambda evt: print('SESSION STARTED: {}'.format(evt)))
-#         speech_recognizer.session_stopped.connect(lambda evt: print('SESSION STOPPED {}'.format(evt)))
-#         speech_recognizer.canceled.connect(lambda evt: print('CANCELED {}'.format(evt)))
-#         # stop continuous transcription on either session stopped or canceled events
-#         speech_recognizer.session_stopped.connect(stop_cb)
-#         speech_recognizer.canceled.connect(stop_cb)
+        # Subscribe to the events fired by the conversation transcriber
+        speech_recognizer.recognizing.connect(lambda evt: print('RECOGNIZING: {}'.format(evt)))
+        speech_recognizer.recognized.connect(lambda evt: all_results.append(evt.result.text))          
+        speech_recognizer.session_started.connect(lambda evt: print('SESSION STARTED: {}'.format(evt)))
+        speech_recognizer.session_stopped.connect(lambda evt: print('SESSION STOPPED {}'.format(evt)))
+        speech_recognizer.canceled.connect(lambda evt: print('CANCELED {}'.format(evt)))
+        # stop continuous transcription on either session stopped or canceled events
+        speech_recognizer.session_stopped.connect(stop_cb)
+        speech_recognizer.canceled.connect(stop_cb)
 
-#         # Start continuous speech recognition
-#         speech_recognizer.start_continuous_recognition()
+        # Start continuous speech recognition
+        speech_recognizer.start_continuous_recognition()
 
-#         # Read the whole wave files at once and stream it to sdk
-#         #_, wav_data = wavfile.read(conversationfilename)
-#         audio_input_stream.write(audio_bytes)
-#         audio_input_stream.close()
-#         while not done:
-#             time.sleep(.5)
+        # Read the whole wave files at once and stream it to sdk
+        #_, wav_data = wavfile.read(conversationfilename)
+        audio_input_stream.write(audio_bytes)
+        audio_input_stream.close()
+        while not done:
+            time.sleep(.5)
         
-#         speech_recognizer.stop_continuous_recognition()        
+        speech_recognizer.stop_continuous_recognition()        
               
-#         final_transcription = ' '.join(all_results)
+        final_transcription = ' '.join(all_results)
 
-#         # Get the audio duration in seconds
-#         audio_duration_seconds = audio.duration_seconds
+        # Get the audio duration in seconds
+        audio_duration_seconds = audio.duration_seconds
 
-#         # Convert the audio duration to minutes
-#         audio_duration_minutes = audio_duration_seconds / 60
+        # Convert the audio duration to minutes
+        audio_duration_minutes = audio_duration_seconds / 60
         
-#         audio_duration_minutes_rounded = float(round(audio_duration_minutes, 5))              
+        audio_duration_minutes_rounded = float(round(audio_duration_minutes, 5))              
 
-#         return jsonify({"text": final_transcription, "audio_duration": audio_duration_minutes_rounded})
+        return jsonify({"text": final_transcription, "audio_duration": audio_duration_minutes_rounded})
 
         
-#     # Handle exceptions
-#     except Exception as e:
-#             return jsonify({'Error processing speech to text': str(e)}), 500
+    # Handle exceptions
+    except Exception as e:
+            return jsonify({'Error processing speech to text': str(e)}), 500
 
-  
+
+
+####################################
+## Text to speech backend endpoint##
+####################################
+@app.route('/genesisai-text-to-speech', methods=['POST', 'OPTIONS'])
+@cross_origin(supports_credentials=True, origins=frontend_endpoint)
+def text_to_speech():
+   
+    try:
+        
+        # Check if the request has the correct backend API key
+        if request.headers.get("api-key") != backend_api_key:
+            return jsonify({'error': 'Unauthorized'}), 401
+        
+        # Get the request JSON
+        request_data = request.get_json()
+        
+        if not request_data or 'text' not in request_data:
+            return jsonify({"status": "error", "message": "No text provided"}), 400
+        
+        if 'language' not in request_data:
+            return jsonify({"status": "error", "message": "No language provided"}), 400
+
+        # Get the text to convert and language
+        text = request_data.get('text')
+        language = request_data.get('language')
+        
+        # Optional: voice name (you can customize based on language)
+        voice_name = request_data.get('voice_name', None)
+        
+        # Map language codes to Azure voice names if not provided
+        voice_map = {
+            'pt-PT': 'pt-PT-DuarteNeural',  # Portuguese (Portugal) - Male
+            'pt-BR': 'pt-BR-AntonioNeural',  # Portuguese (Brazil) - Male
+            'en-US': 'en-US-JennyNeural',    # English (US) - Female
+            'en-GB': 'en-GB-RyanNeural',     # English (UK) - Male
+            'es-ES': 'es-ES-AlvaroNeural',   # Spanish (Spain) - Male
+            'fr-FR': 'fr-FR-DeniseNeural',   # French - Female
+        }
+        
+        # Set voice name based on language if not provided
+        if not voice_name:
+            voice_name = voice_map.get(language, 'pt-PT-DuarteNeural')
+        
+        # Configure Azure Speech Service
+        speech_config = speechsdk.SpeechConfig(
+            subscription=azure_keyvault_client.get_secret("AISPEECH-KEY").value, 
+            region="eastus"#azure_keyvault_client.get_secret("AISPEECH-REGION").value
+        )
+        
+        # Set the voice name
+        speech_config.speech_synthesis_voice_name = voice_name
+        
+        # Set output format to high quality audio
+        speech_config.set_speech_synthesis_output_format(
+            speechsdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
+        )
+        
+        # Create a speech synthesizer with null output (we'll get the audio data directly)
+        synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=None)
+        
+        # Perform text-to-speech
+        result = synthesizer.speak_text_async(text).get()
+        
+        # Check result
+        if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
+            # Get audio data
+            audio_data = result.audio_data
+            
+            # Return audio as response
+            return Response(
+                audio_data,
+                mimetype='audio/mpeg',
+                headers={
+                    'Content-Type': 'audio/mpeg',
+                    'Content-Disposition': 'inline; filename="speech.mp3"'
+                }
+            )
+            
+        elif result.reason == speechsdk.ResultReason.Canceled:
+            cancellation_details = result.cancellation_details
+            logger.error(f"Speech synthesis canceled: {cancellation_details.reason}")
+            if cancellation_details.reason == speechsdk.CancellationReason.Error:
+                logger.error(f"Error details: {cancellation_details.error_details}")
+            return jsonify({
+                "status": "error", 
+                "message": f"Speech synthesis canceled: {cancellation_details.reason}"
+            }), 500
+        
+        return jsonify({"status": "error", "message": "Unknown error in speech synthesis"}), 500
+
+    # Handle exceptions
+    except Exception as e:
+        logger.error(f"Error in text-to-speech: {str(e)}")
+        return jsonify({'Error processing text to speech': str(e)}), 500
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

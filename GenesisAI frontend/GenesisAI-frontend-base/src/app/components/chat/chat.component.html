@@ -153,6 +153,14 @@
               <div class="answer-text-container">
                 <div class="answer-text">
                   <span #messageContainer [innerHtml]="message.text"></span>
+
+                  <div class="tts-container" *ngIf="message.text && message.text.length > 0">
+                      <app-text-to-speech 
+                      [text]="message.text" 
+                      [language]="currentLanguage">
+                      </app-text-to-speech>
+                  </div>
+
                   <div class="feedbackContainer" *ngIf="message.allowsfeedback && message.messageid.length > 0">
                     <div class="feedback d-flex justify-content-center align-items-center">
                       <svg class="like me-2" width="19" height="19" viewBox="0 0 19 19" fill="none"
